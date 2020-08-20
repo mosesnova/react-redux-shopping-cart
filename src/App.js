@@ -3,8 +3,9 @@ import data from "./data.json"
 import './App.css';
 import Products from './components/Products';
 import Filter from './components/Filter';
-import Cart from './components/cart'
-
+import Cart from './components/cart';
+import store from './store.js'
+import { Provider } from "react-redux";
 
 class App extends React.Component {
   constructor(){
@@ -40,7 +41,7 @@ class App extends React.Component {
     this.setState({cartItems})
     localStorage.setItem("cartItems",JSON.stringify(cartItems));
   }
-  sortProducts(event){
+ /* sortProducts(event){
     console.log(event.target.value);
   }
   filterProducts=(event)=>{
@@ -55,27 +56,21 @@ class App extends React.Component {
       products:data.products.filter(product => product.availableSizes.indexOf(event.target.value)>=0)
     })
   }
-  };
+  };*/
   render(){
   return (
+    <Provider store={store}>
     <div className="grid-container">
       <header>
         <a href="/">React Shopping Cart</a>
       </header>
       <main>
-        
-      
       <div>
         <div className="content">
           <div className="main">
-            <Filter count={this.state.products.length} 
-            size={this.state.size}
-            sort={this.state.sort}
-            filterProducts={this.filterProducts}
-            sortProducts={this.sortProducts}
-
+            <Filter
             ></Filter>
-            <Products products ={this.state.products} addToCart={this.addToCart}></Products>
+            <Products  addToCart={this.addToCart}></Products>
           </div>
           <div className="sidebar"><Cart cartItems={this.state.cartItems} removeFromCart={this.removeFromCart} createOrder={this.createOrder}></Cart></div>
         </div>
@@ -85,6 +80,7 @@ class App extends React.Component {
         All right is reserved
       </footer>
     </div>
+    </Provider>
   );
 }
 }

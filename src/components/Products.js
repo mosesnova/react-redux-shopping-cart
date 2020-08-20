@@ -1,25 +1,37 @@
-import React, { Component} from 'react'
+import React, { Component } from "react";
 import formatCurrency from "../util";
-import Modal from 'react-modal';
+//import Fade from "react-reveal/Fade";
+import Modal from "react-modal";
+import Zoom from "react-reveal/Zoom";
+import { connect } from "react-redux";
+import { fetchProducts } from "../actions/productActions";
+//import { addToCart } from "../actions/cartActions";
 
-export default class Products extends Component{
-    constructor(props){
-        super(props);
-        this.state ={
-            product:null
-        };
-    }
-    openModal = (product) => {
-        this.setState({ product });
-      };
-      closeModal = () => {
-        this.setState({ product: null });
-      };
-    render(){
-        const {product}=this.state;
-        return(
-            <div>
-               <ul className="products">
+class Products extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      product: null,
+    };
+  }
+  componentDidMount() {
+    this.props.fetchProducts();
+  }
+  openModal = (product) => {
+    this.setState({ product });
+  };
+  closeModal = () => {
+    this.setState({ product: null });
+  };
+  render() {
+    const { product } = this.state;
+    return (
+      <div>
+        
+          {!this.props.products ? (
+            <div>Loading...</div>
+          ) : (
+            <ul className="products">
               {this.props.products.map((product) => (
                 <li key={product._id}>
                   <div className="product">
@@ -43,8 +55,11 @@ export default class Products extends Component{
                 </li>
               ))}
             </ul>
-            {product && <Modal isOpen={true} onRequestClose={this.closeModal}>
-          
+          )}
+        
+        {product && (
+          <Modal isOpen={true} onRequestClose={this.closeModal}>
+            <Zoom>
               <button className="close-modal" onClick={this.closeModal}>
                 x
               </button>
@@ -78,9 +93,17 @@ export default class Products extends Component{
                   </div>
                 </div>
               </div>
-           
-          </Modal>}
-            </div>
-        )
-    }
+            </Zoom>
+          </Modal>
+        )}
+      </div>
+    );
+  }
 }
+export default connect(
+  (state) => ({ products: state.products.filteredItems }),
+  {
+    fetchProducts,
+   
+  }
+)(Products);
